@@ -38,6 +38,25 @@ The renderer is being developed as an educational and portfolio project to under
   - Fragment Shaders
   - Compute Shaders
 
+## Compute Pipeline
+  - Compute Pipeline Creation
+  - GPU Buffer Processing
+  - Parallel Compute Dispatch
+  - Image Processing
+  - GPU Particle Simulation (planned)
+## Rendering Features
+  - Forward Rendering
+  - Physically Based Rendering (PBR)
+  - HDR Rendering
+  - Skybox
+  - Shadow Mapping
+  - MSAA
+  - Post Processing
+  - Tone Mapping
+  - Bloom
+  - Gamma Correction
+
+
 
 
 
