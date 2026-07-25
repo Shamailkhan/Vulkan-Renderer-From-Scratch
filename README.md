@@ -56,7 +56,21 @@ The renderer is being developed as an educational and portfolio project to under
   - Bloom
   - Gamma Correction
 
-
+## Resource Loading
+  - GLTF Model Loading
+  - Texture Loading
+  - Cubemaps
+  - Material System
+## Camera System
+  - Perspective Camera
+  - Free Fly Camera
+  - Orbit Camera
+## Performance
+  - GPU Timestamp Queries
+  - Vulkan Debug Markers
+  - Frustum Culling  
+  - Compute-based Culling (planned)
+  - GPU Profiling
 
 
 
