@@ -10,3 +10,34 @@ The renderer is being developed as an educational and portfolio project to under
   - Dynamic Rendering
   - Render Graph (planned)
   - Multi-threaded Command Recording (planned)
+## Core Vulkan Systems
+  - Physical Device Selection
+  - Logical Device Creation
+  - Queue Family Management
+  - Swapchain Creation
+  - Image Views
+  - Render Passes
+  - Framebuffers
+  - Synchronization Objects
+  - Command Pools
+  - Command Buffers
+## GPU Resource Management
+  - Buffers
+  - Images
+  - Image Layout Transitions 
+  - Descriptor Pools
+  - Descriptor Sets
+  - Descriptor Set Layouts
+  - Push Constants
+  - Uniform Buffers
+  - Storage Buffers
+## Shader System
+  - GLSL
+  - SPIR-V Compilation
+  - Vertex Shaders
+  - Fragment Shaders
+  - Compute Shaders
+
+
+
+
