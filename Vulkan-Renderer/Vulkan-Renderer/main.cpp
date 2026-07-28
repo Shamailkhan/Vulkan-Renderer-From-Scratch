@@ -157,7 +157,7 @@ int main()
 	}
 
 	VkPhysicalDevice physicalDevice = device[bestDeviceIndex];
-
+	std::cout << "best score" << bestScore << std::endl;
 	///////////////////Step 7///////////////////////
 
 	 VkPhysicalDeviceProperties selectedProps;
@@ -168,6 +168,7 @@ int main()
 		 << selectedProps.deviceName << std::endl;
 	 std::cout << "Type: " << GetDeviceTypeName(selectedProps.deviceType) << std::endl;
 	 std::cout << "=================" << std::endl;
+
 
 
 	//Cleanup
