@@ -41,6 +41,7 @@ int main()
 
 	/////////////STEP 1///////////////////////
 	//DEFINING A STRUCTURE THAT DESCRIBE THE APPLICATION TO VULKAN 
+	
 	//VULKAN USE U STYPE TO IDENTIFY STRUCT TYPE 
 	//{} IT INITIALIZE ALL THE FEILD TO ZERO OR NULL 
 	// An Instance is your connection to the Vulkan driver.
@@ -57,6 +58,7 @@ int main()
 	//////////////////////STEP 2//////////////////////////////
 	   // This struct tells Vulkan *how* to create the Instance.
 		// Think of it as "Instance configuration."
+
 	VkInstanceCreateInfo createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	createInfo.pApplicationInfo = &appInfo;
@@ -67,6 +69,7 @@ int main()
 
 
 	//////////////////////STEP 3//////////////////////////////
+	
 	//this is where we tell vulkan driver to initialize 
 	VkInstance instance;
 	VkResult result=vkCreateInstance(&createInfo,nullptr,&instance);
