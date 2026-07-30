@@ -93,7 +93,7 @@ int main()
 		//   1. First call with nullptr to get the count
 		//   2. Allocate array of that size
 		//   3. Second call to get the actual devices
-
+	// Step 1: Ask "How many GPUs do you have?"
 	uint32_t deviceCount = 0;
 	vkEnumeratePhysicalDevices(instance,&deviceCount,nullptr);
 	//we dont know ahead of time how many GPU exist so
