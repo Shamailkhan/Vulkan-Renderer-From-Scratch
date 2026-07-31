@@ -2,6 +2,8 @@
 #include <iostream>
 #include<vector>
 #include<string>
+#include <stdexcept>
+
 
 /**
  * Convert VkPhysicalDeviceType to human-readable string.
@@ -35,6 +37,26 @@ int ScoreGPU(VkPhysicalDeviceType type) {
 		return 0;
 	}
 }
+/**
+ * Convert VkQueueFlags to human-readable string.
+ * VkQueueFlags is a bitmask, so we check each bit individually.
+ *
+ * Possible flags:
+ * - VK_QUEUE_GRAPHICS_BIT (can render)
+ * - VK_QUEUE_COMPUTE_BIT (can run compute shaders)
+ * - VK_QUEUE_TRANSFER_BIT (can copy memory)
+ * - VK_QUEUE_SPARSE_BINDING_BIT (advanced)
+ */
+std::string GetQueueFlagsString(VkQueueFlags flags) {
+	std::string result;
+	if (flags & VK_QUEUE_GRAPHICS_BIT) result += "Graphics ";
+	if (flags & VK_QUEUE_COMPUTE_BIT) result += "Compute ";
+	if (flags & VK_QUEUE_TRANSFER_BIT) result += "Transfer ";
+	if (flags & VK_QUEUE_SPARSE_BINDING_BIT) result += "SparseBinding ";
+
+	return result.empty() ? "None" : result;
+}
+
 int main()
 {
    //vulkan triangle rendering
@@ -42,7 +64,7 @@ int main()
 	/////////////STEP 1///////////////////////
 	//DEFINING A STRUCTURE THAT DESCRIBE THE APPLICATION TO VULKAN 
 	
-	//VULKAN USE U STYPE TO IDENTIFY STRUCT TYPE 
+	//VULKAN USE  STYPE TO IDENTIFY STRUCT TYPE 
 	//{} IT INITIALIZE ALL THE FEILD TO ZERO OR NULL 
 	// An Instance is your connection to the Vulkan driver.
 	// We need to tell Vulkan who we are (application info).
@@ -171,6 +193,104 @@ int main()
 		 << selectedProps.deviceName << std::endl;
 	 std::cout << "Type: " << GetDeviceTypeName(selectedProps.deviceType) << std::endl;
 	 std::cout << "=================" << std::endl;
+
+	 ///===============================================////////////////
+	 //Logical Device
+	 // Every GPU has "queue families" - groups of queues with identical capabilities.
+		// We need to find which family supports graphics rendering.
+		//
+		// Why this matters:
+		// - Some queues do graphics rendering
+		// - Some queues do compute
+		// - Some queues do memory transfers
+		// We need to pick the right family for rendering.
+	 //get total number of different queue families
+	 uint32_t queueFamilyCount = 0;
+	 vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice,&queueFamilyCount,nullptr);
+
+	 //GET PROPERTIES
+	 std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+	 vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice,&queueFamilyCount,queueFamilies.data());
+
+	 std::cout << "\nQueue Families:" << std::endl;
+	 std::cout << "=================" << std::endl;
+
+		// Search through queue families to find one that supports graphics.
+		// For rendering, we need VK_QUEUE_GRAPHICS_BIT capability.
+
+
+
+	 int graphicsQueueFamilyIndex = -1;
+	 for (uint32_t i = 0; i < queueFamilyCount; ++i) {
+		 std::cout << "Family " << i << ":" << std::endl;
+		 std::cout << "  Capabilities: " << GetQueueFlagsString(queueFamilies[i].queueFlags) << std::endl;
+		 std::cout << "  Queue Count: " << queueFamilies[i].queueCount << std::endl;
+	 }
+
+	 if (graphicsQueueFamilyIndex == -1) {
+		 throw std::runtime_error("No graphics queue family found!");
+	 }
+
+	 std::cout << "\nSelected graphics queue family: " << graphicsQueueFamilyIndex << std::endl;
+	 
+	 //Create Logical Device
+	   // A Logical Device is your exclusive connection to the GPU.
+		// Think of it as "opening an account at the bank."
+		// Multiple programs can have different logical devices from the same physical GPU.
+
+		// First, specify which queues we want to create.
+		// We want 1 graphics queue from the graphics family.
+	  
+	  
+	 float queuePriority = 1.0f; //Maximum priority(range: 0.0 - 1.0)
+	 VkDeviceQueueCreateInfo queueCreateInfo{};
+	 queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+	 queueCreateInfo.queueFamilyIndex = graphicsQueueFamilyIndex;
+	 queueCreateInfo.queueCount = 1;
+	 queueCreateInfo.pQueuePriorities = &queuePriority;
+
+	 // Now create the Logical Device.
+	 // We tell Vulkan:
+	 // - Which queue families to use
+	 // - Which extensions we need (none for now)
+	 // - Which features we want (none for now)
+
+	 VkDeviceCreateInfo deviceCreateInfo{};
+	 deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+	 deviceCreateInfo.queueCreateInfoCount = 1;  // We're creating 1 queue
+	 deviceCreateInfo.pQueueCreateInfos = &queueCreateInfo;
+	 deviceCreateInfo.enabledExtensionCount = 0;
+	 deviceCreateInfo.ppEnabledExtensionNames = nullptr;
+	 deviceCreateInfo.pEnabledFeatures = nullptr;  // Use default feature
+
+	 VkDevice logicalDevice;
+	 result = vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &logicalDevice);
+
+	 if (result != VK_SUCCESS) {
+		 std::string errorMsg = "Failed to create logical device: ";
+		 switch (result) {
+		 case VK_ERROR_OUT_OF_HOST_MEMORY:
+			 errorMsg += "Out of host memory";
+			 break;
+		 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+			 errorMsg += "Out of device memory";
+			 break;
+		 case VK_ERROR_INITIALIZATION_FAILED:
+			 errorMsg += "Initialization failed";
+			 break;
+		 case VK_ERROR_EXTENSION_NOT_PRESENT:
+			 errorMsg += "Requested extension not available";
+			 break;
+		 case VK_ERROR_FEATURE_NOT_PRESENT:
+			 errorMsg += "Requested feature not available";
+			 break;
+		 default:
+			 errorMsg += "Unknown error";
+		 }
+		 throw std::runtime_error(errorMsg);
+	 }
+
+	 std::cout << "✓ Logical Device created successfully!" << std::endl;
 
 
 
