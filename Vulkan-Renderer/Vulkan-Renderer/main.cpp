@@ -291,12 +291,47 @@ int main()
 	 }
 
 	 std::cout << "✓ Logical Device created successfully!" << std::endl;
+	 // ========================================
+	  // STEP 10: Get Queue Handle
+	  // ========================================
 
+	   // After creating a Logical Device with queues, we need to get the actual queue handles.
+		// These handles are what we'll use to submit rendering commands later.
 
+	 VkQueue graphicQueue;
+	 vkGetDeviceQueue(logicalDevice,graphicsQueueFamilyIndex,0,&graphicQueue);
+	 //								Which queue in the family (0 = first queue)
+	 // 
+	 std::cout << "✓ Graphics queue retrieved successfully!" << std::endl;
 
 	//Cleanup
-	vkDestroyInstance(instance, nullptr);
-	return 0;
+	 std::cout << "\n=================" << std::endl;
+	 std::cout << "VULKAN SETUP COMPLETE" << std::endl;
+	 std::cout << "=================" << std::endl;
+	 std::cout << "Instance: ✓ Created" << std::endl;
+	 std::cout << "Physical Device: ✓ Selected (" << selectedProps.deviceName << ")" << std::endl;
+	 std::cout << "Logical Device: ✓ Created" << std::endl;
+	 std::cout << "Graphics Queue: ✓ Obtained" << std::endl;
+	 std::cout << "=================" << std::endl;
+
+	 // ========================================
+	 // STEP 8: Clean Up (Reverse Order!)
+	 // ========================================
+	 // IMPORTANT: Destroy in reverse order of creation!
+	 // This prevents trying to destroy the Instance while it's still in use.
+	 //
+	 // Destruction order:
+	 // 1. Logical Device (created last)
+	 // 2. Instance (created first)
+
+	 vkDestroyDevice(logicalDevice, nullptr);
+	 std::cout << "\n✓ Logical Device destroyed." << std::endl;
+
+	 vkDestroyInstance(instance, nullptr);
+	 std::cout << "✓ Vulkan Instance destroyed." << std::endl;
+
+	 return 0;
+
 
 }
 
