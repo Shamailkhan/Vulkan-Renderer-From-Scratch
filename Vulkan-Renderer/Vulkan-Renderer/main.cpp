@@ -221,10 +221,27 @@ int main()
 
 
 	 int graphicsQueueFamilyIndex = -1;
-	 for (uint32_t i = 0; i < queueFamilyCount; ++i) {
+
+	 for (uint32_t i = 0; i < queueFamilyCount; ++i)
+	 {
 		 std::cout << "Family " << i << ":" << std::endl;
-		 std::cout << "  Capabilities: " << GetQueueFlagsString(queueFamilies[i].queueFlags) << std::endl;
-		 std::cout << "  Queue Count: " << queueFamilies[i].queueCount << std::endl;
+		 std::cout << "  Capabilities: "
+			 << GetQueueFlagsString(queueFamilies[i].queueFlags)
+			 << std::endl;
+
+		 std::cout << "  Queue Count: "
+			 << queueFamilies[i].queueCount
+			 << std::endl;
+
+		 // Check if this queue family supports graphics.
+		 if (queueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+		 {
+			 graphicsQueueFamilyIndex = i;
+
+			 std::cout << "  Graphics queue found!" << std::endl;
+
+			 break;
+		 }
 	 }
 
 	 if (graphicsQueueFamilyIndex == -1) {
@@ -234,6 +251,7 @@ int main()
 	 std::cout << "\nSelected graphics queue family: " << graphicsQueueFamilyIndex << std::endl;
 	 
 	 //Create Logical Device
+	 // Physical = hardware, Logical = your connection to it.
 	   // A Logical Device is your exclusive connection to the GPU.
 		// Think of it as "opening an account at the bank."
 		// Multiple programs can have different logical devices from the same physical GPU.
@@ -290,7 +308,7 @@ int main()
 		 throw std::runtime_error(errorMsg);
 	 }
 
-	 std::cout << "✓ Logical Device created successfully!" << std::endl;
+	 std::cout << " Logical Device created successfully!" << std::endl;
 	 // ========================================
 	  // STEP 10: Get Queue Handle
 	  // ========================================
@@ -302,17 +320,51 @@ int main()
 	 vkGetDeviceQueue(logicalDevice,graphicsQueueFamilyIndex,0,&graphicQueue);
 	 //								Which queue in the family (0 = first queue)
 	 // 
-	 std::cout << "✓ Graphics queue retrieved successfully!" << std::endl;
+	 std::cout << "Graphics queue retrieved successfully!" << std::endl;
 
-	//Cleanup
+
 	 std::cout << "\n=================" << std::endl;
 	 std::cout << "VULKAN SETUP COMPLETE" << std::endl;
 	 std::cout << "=================" << std::endl;
-	 std::cout << "Instance: ✓ Created" << std::endl;
-	 std::cout << "Physical Device: ✓ Selected (" << selectedProps.deviceName << ")" << std::endl;
-	 std::cout << "Logical Device: ✓ Created" << std::endl;
-	 std::cout << "Graphics Queue: ✓ Obtained" << std::endl;
+	 std::cout << "Instance: Created" << std::endl;
+	 std::cout << "Physical Device: Selected (" << selectedProps.deviceName << ")" << std::endl;
+	 std::cout << "Logical Device: Created" << std::endl;
+	 std::cout << "Graphics Queue: Obtained" << std::endl;
 	 std::cout << "=================" << std::endl;
+
+
+
+	 //up till this point we can talk to gpu
+	 // can not store vertex data on gpu
+	 //next step is memeory allocation 
+	 //cpu data lives in system ram 
+		//application data lives here
+	 //gpu memeory (Video Memory)
+		// rendering core acess data here 
+	 //problem is data transfer is slow 
+
+	 // different GPU memeory 
+		//device local memory (VRAM)
+		/*Data flow:
+			CPU (app data)
+			  └─→ Host Visible Buffer (staging)
+					└─→ vkCmdCopyBuffer (transfer queue)
+						  └─→ Device Local Buffer (GPU fast memory)*/
+		
+
+	  // Step 9: Query Memory Properties
+
+
+
+
+
+
+
+
+
+
+
+
 
 	 // ========================================
 	 // STEP 8: Clean Up (Reverse Order!)
@@ -325,10 +377,10 @@ int main()
 	 // 2. Instance (created first)
 
 	 vkDestroyDevice(logicalDevice, nullptr);
-	 std::cout << "\n✓ Logical Device destroyed." << std::endl;
+	 std::cout << "\n Logical Device destroyed." << std::endl;
 
 	 vkDestroyInstance(instance, nullptr);
-	 std::cout << "✓ Vulkan Instance destroyed." << std::endl;
+	 std::cout << " Vulkan Instance destroyed." << std::endl;
 
 	 return 0;
 
